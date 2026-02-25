@@ -23,8 +23,9 @@ async function createPaymentOrder(req, res, next) {
 
 async function handleWebhook(req, res, next) {
   try {
+    // NOTE: paymentService.handleWebhook sends the response itself (200/400/500).
+    // Do NOT call res.json() again here — that would cause a double-response crash.
     await paymentService.handleWebhook(req, res);
-    res.json({ received: true });
   } catch (err) {
     next(err);
   }
