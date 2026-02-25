@@ -1,5 +1,5 @@
 const paymentService = require("../service/webhooks.service");
-const pool = require("../db/db");
+const pool = require("../config/db");
 const {
   getBestPartner,
   invalidateCache,

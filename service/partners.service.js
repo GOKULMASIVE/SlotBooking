@@ -1,5 +1,5 @@
-const pool = require("../db/db");
-const redis = require("../redis/redis");
+const pool = require("../config/db");
+const redis = require("../config/redis");
 
 async function createPartner(data) {
   const {
