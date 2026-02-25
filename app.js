@@ -1,7 +1,7 @@
 const express = require("express");
-const partnerRoutes = require("./Routes/partners.route");
-const bookingRoutes = require("./Routes/booking.route");
-const webhookRoutes = require("./Routes/webhook.route");
+const partnerRoutes = require("./routes/partners.route");
+const bookingRoutes = require("./routes/booking.route");
+const webhookRoutes = require("./routes/webhook.route");
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();

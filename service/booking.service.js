@@ -71,7 +71,6 @@ async function cancelBooking(bookingId) {
   try {
     await client.query("BEGIN");
 
-    // 1️⃣ Lock booking row
     const bookingRes = await client.query(
       `SELECT * FROM bookings WHERE id=$1 FOR UPDATE`,
       [bookingId],
@@ -81,27 +80,23 @@ async function cancelBooking(bookingId) {
     if (booking.status === "CANCELLED")
       return { cancelled: false, message: "Already cancelled" };
 
-    // 2️⃣ Get associated payment
     const paymentRes = await client.query(
       `SELECT * FROM payments WHERE booking_id=$1 AND status='SUCCESS'`,
       [bookingId],
     );
     const payment = paymentRes.rows[0];
 
-    let refundAmount = booking.amount; // full refund; can customize for partial
+    let refundAmount = booking.amount;
 
-    // 3️⃣ Initiate Razorpay Refund if payment exists
     if (payment) {
       await razorpay.payments.refund(payment.provider_payment_id, {
-        amount: Math.round(refundAmount * 100), // in paise
+        amount: Math.round(refundAmount * 100),
       });
 
-      // 4️⃣ Update payment status to REFUNDED
       await client.query(`UPDATE payments SET status='REFUNDED' WHERE id=$1`, [
         payment.id,
       ]);
     } else {
-      // If payment was not captured yet, mark as REFUND_INITIATED
       await client.query(
         `INSERT INTO payments (booking_id, amount, status)
          VALUES ($1,$2,'REFUND_INITIATED')`,
@@ -109,7 +104,6 @@ async function cancelBooking(bookingId) {
       );
     }
 
-    // 5️⃣ Update booking status
     await client.query(`UPDATE bookings SET status='CANCELLED' WHERE id=$1`, [
       bookingId,
     ]);
