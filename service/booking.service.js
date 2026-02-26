@@ -1,5 +1,6 @@
 const paymentService = require("../service/webhooks.service");
 const pool = require("../config/db");
+const razorpay = require("../config/razorPay");
 const {
   getBestPartner,
   invalidateCache,
@@ -87,7 +88,7 @@ async function cancelBooking(bookingId) {
     const payment = paymentRes.rows[0];
 
     let refundAmount = booking.amount;
-
+    console.log(refundAmount, payment, "----");
     if (payment) {
       await razorpay.payments.refund(payment.provider_payment_id, {
         amount: Math.round(refundAmount * 100),
