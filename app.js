@@ -14,5 +14,5 @@ app.use("/api/partners", partnerRoutes);
 app.use("/api/bookings", bookingRoutes);
 
 app.use(errorHandler);
-
+console.log("HI Testing");
 module.exports = app;
